@@ -1,17 +1,17 @@
 {
-    "name": "spatie/pdf-to-text",
+    "name": "azam1/pdf-to-text",
     "description": "Extract text from a pdf",
     "keywords": [
         "spatie",
         "pdf-to-text"
     ],
-    "homepage": "https://github.com/spatie/pdf-to-text",
+    "homepage": "https://github.com/azam1/pdf-to-text/",
     "license": "MIT",
     "authors": [
         {
-            "name": "Freek Van der Herten",
-            "email": "freek@spatie.be",
-            "homepage": "https://spatie.be",
+            "name": "Azam Nisamdeen",
+            "email": "azam@hayz.com.au",
+            "homepage": "https://hayz.com.au",
             "role": "Developer"
         }
     ],

@@ -5,6 +5,7 @@ namespace Spatie\PdfToText;
 use Spatie\PdfToText\Exceptions\CouldNotExtractText;
 use Spatie\PdfToText\Exceptions\PdfNotFound;
 use Symfony\Component\Process\Process;
+use Spatie\PdfToText\Exceptions\CouldNotScanPdf;
 
 class Pdf
 {
@@ -12,13 +13,22 @@ class Pdf
 
     protected string $binPath;
 
+    protected string $binPathOcr;
+
+    protected string $binPathQPDF;
+
+    protected array $scanOptions = [];
+
     protected array $options = [];
 
-    protected int $timeout = 60;
+    protected int $timeout = 300;
 
-    public function __construct(?string $binPath = null)
+    public function __construct(?string $binPath = null, ?string $binPathOcr = null, ?string $binPathQPDF = null, ?int $timeout = null)
     {
         $this->binPath = $binPath ?? '/usr/bin/pdftotext';
+        $this->binPathOcr = $binPathOcr ?? '/usr/bin/ocrmypdf';
+        $this->binPathQPDF = $binPathQPDF ?? '/usr/bin/qpdf';
+        $this->timeout = $timeout ?? 300; // Default 5 minutes
     }
 
     public function setPdf(string $pdf): self
@@ -28,6 +38,34 @@ class Pdf
         }
 
         $this->pdf = $pdf;
+
+        return $this;
+    }
+
+    public function setScanOptions(array $options): self
+    {
+        $this->scanOptions = $this->parseOptions($options);
+
+        return $this;
+    }
+
+    public function addScanOptions(array $options): self
+    {
+        $this->scanOptions = array_merge(
+            $this->scanOptions,
+            $this->parseOptions($options)
+        );
+
+        return $this;
+    }
+
+    public function scan() : self
+    {
+        $process = new Process(array_merge([$this->binPathOcr], $this->scanOptions, [$this->pdf, $this->pdf]));
+        $process->setTimeout($this->timeout)->run();
+        if (!$process->isSuccessful()) {
+            throw new CouldNotScanPdf($process);
+        }
 
         return $this;
     }
